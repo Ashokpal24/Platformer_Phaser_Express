@@ -50,12 +50,41 @@ function create() {
   this.physics.add.collider(groundLayer, player);
 
   cursors = this.input.keyboard.createCursorKeys();
+
+  this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+  this.cameras.main.startFollow(player);
+  this.cameras.main.setBackgroundColor("#ccccff");
+
+  this.anims.create({
+    key: "walk",
+    frames: this.anims.generateFrameNames("player", {
+      prefix: "p1_walk",
+      start: 1,
+      end: 11,
+      zeroPad: 2,
+    }),
+    frameRate: 30,
+    repeat: -1,
+  });
+
+  this.anims.create({
+    key: "idle",
+    frames: [{ key: "player", frame: "p1_stand" }],
+    frameRate: 30,
+  });
 }
 function update() {
   if (cursors.left.isDown) {
     player.body.setVelocityX(-200);
+    player.anims.play("walk", true);
+    player.flipX = true;
   } else if (cursors.right.isDown) {
     player.body.setVelocityX(200);
+    player.anims.play("walk", true);
+    player.flipX = false;
+  } else {
+    player.body.setVelocityX(0);
+    player.anims.play("idle", true);
   }
   if ((cursors.space.isDown || cursors.up.isDown) && player.body.onFloor()) {
     player.body.setVelocityY(-500);
