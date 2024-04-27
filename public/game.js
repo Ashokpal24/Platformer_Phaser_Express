@@ -25,6 +25,7 @@ var map;
 var player;
 var cursors;
 var groundLayer, coinLayer;
+var score = 0;
 var text;
 
 function preload() {
@@ -72,6 +73,17 @@ function create() {
     frames: [{ key: "player", frame: "p1_stand" }],
     frameRate: 30,
   });
+
+  var coinTiles = map.addTilesetImage("coin");
+  coinLayer = map.createLayer("Coins", coinTiles, 0, 0);
+  coinLayer.setTileIndexCallback(17, collectCoin, this);
+  this.physics.add.overlap(player, coinLayer);
+
+  text = this.add.text(20, 20, "0", {
+    fontSize: "20px",
+    fill: "#ffffff",
+  });
+  text.setScrollFactor(0);
 }
 function update() {
   if (cursors.left.isDown) {
@@ -89,4 +101,11 @@ function update() {
   if ((cursors.space.isDown || cursors.up.isDown) && player.body.onFloor()) {
     player.body.setVelocityY(-500);
   }
+}
+
+function collectCoin(sprite, tile) {
+  coinLayer.removeTileAt(tile.x, tile.y);
+  score++;
+  text.setText(score);
+  return false;
 }
